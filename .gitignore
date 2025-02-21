@@ -1,0 +1,10 @@
+*
+!*.pas
+!*.dfm
+!*.dpr
+!*.dproj
+!.gitignore
+!*.md
+TestSource.pas
+
+
