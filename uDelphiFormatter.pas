@@ -112,10 +112,20 @@ begin
   // Add Spaces Around Binary Operators
   if FormatterConfig.AddSpacesAroundBinOps1 then
   begin
-    KeyWords := ['\+', '\-', '\*', '\/', '=', '<', '>', '>=', '<=', '<>', ':='];
+    KeyWords := ['\+', '\-', '\*', '\/', '=', '>=', '<=', '<>', ':='];
     for KeyWord in KeyWords do
       FormattedCode := AddSpacesAroundBinaryOperators1(FormattedCode, KeyWord);
+
+    // Workaround for < > in Generics, like TList<Byte>
+    if ContainsText(FormattedCode, 'if') then
+    begin
+      KeyWords := ['<', '>'];
+      for KeyWord in KeyWords do
+        FormattedCode := AddSpacesAroundBinaryOperators1(FormattedCode, KeyWord);
+    end;
   end;
+
+
 
   if FormatterConfig.AddSpacesAroundBinOpsWord then
   begin

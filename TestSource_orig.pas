@@ -2,6 +2,7 @@
 var
   resCode:string; //test add space after : ; ,
   j,i:integer;
+  ListRegAcks: TList<TRegAck>; // test for correct work with < > in Generics
 begin
   if TesterTerminalCOM<>nil then
   with ButtonStart do
@@ -30,12 +31,19 @@ if tag=0 then begin//test comment just after begin; no-ident
 end;
 
 var //test non-deleting my new-lines
-  RegTypesStr: array[TOSRegisterType] of string = (
-    'Binary',
-    'String',
-    'RAW');
+  IdentifyRegister:array[0..2] of TOSRegister=(
+    (RegAdr: regIdentStr;        RegType: rtString;  RegReadOnly: True),
+    (RegAdr: regStartStop;       RegType: rtU8;      RegReadOnly: False),
+    (RegAdr: regSerial;          RegType: rtU16;     RegReadOnly: False)
+    );
 
 // test utf-8 support
       LabelLog.Caption := IntToStr(Resistance)+' Ω ' +
         'speed = ' + FloatToStrF(BytesReceived/TimePast,ffFixed,10,1) + ' B/s';
 
+    case RegType of
+      rtU8: begin
+              U8 := Value;
+              Move(U8, Pointer(RawData)^, Size);
+            end;        
+    end;

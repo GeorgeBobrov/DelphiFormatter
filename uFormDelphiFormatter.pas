@@ -66,6 +66,7 @@ type
 
     procedure LoadConfig(IniFileName: string);
     procedure SaveConfig(IniFileName: string);
+    procedure LoadFile(FileName: string);
   end;
 
 var
@@ -77,7 +78,7 @@ implementation
 
 procedure TFormDelphiFormatter.FormCreate(Sender: TObject);
 var
-  IniList: TStringList;
+  ParamList: TStringList;
   i: Integer;
   SourceFileName, ResultFileName: string;
 
@@ -88,17 +89,17 @@ begin
   PanelsWidthRatio := 0.5;
   PanelSource.Width := Trunc(Self.Width * PanelsWidthRatio) - 2;
 
-  IniList := TStringList.Create;
+  ParamList := TStringList.Create;
 
   for i := 1 to ParamCount do
-    IniList.Add(ParamStr(i));
+    ParamList.Add(ParamStr(i));
 
   // if exist param with .ini, load that ini
-  for i := 0 to IniList.Count - 1 do
-    if EndsText(IniList[i], '.conf') then
+  for i := 0 to ParamList.Count - 1 do
+    if EndsText(ParamList[i], '.conf') then
     begin
-      OpenDialogConfig.FileName := IniList.Values['conf'];
-      IniList.Delete(i);
+      OpenDialogConfig.FileName := ParamList.Values['conf'];
+      ParamList.Delete(i);
       break;
     end;
 
@@ -109,21 +110,17 @@ begin
   LoadConfig(OpenDialogConfig.FileName);
 
   // first param - SourceFileName
-  if (IniList.Count >= 1) then
-    SourceFileName := IniList[0];
+  if (ParamList.Count >= 1) then
+    SourceFileName := ParamList[0];
 
   // if there are no more params, or there is param auto - auto process file
-  AutoProcessAndClose := (IniList.Count = 1) or (IniList.IndexOfName('auto') >= 0);
+  AutoProcessAndClose := (ParamList.Count = 1) or (ParamList.IndexOfName('auto') >= 0);
 
-  ResultFileName := IniList.Values['ResultFile'];
+  ResultFileName := ParamList.Values['ResultFile'];
   LabelResultFile.Caption := ResultFileName;
 
   if (SourceFileName <> '') then
-  begin
-    MemoSource.Lines.LoadFromFile(SourceFileName);
-    LabelSourceFile.Caption := ExpandFileName(SourceFileName);
-    LabelEncoding.Caption := MemoSource.Lines.Encoding.EncodingName;
-  end;
+    LoadFile(SourceFileName);
 
   if AutoProcessAndClose then
   begin
@@ -158,7 +155,10 @@ begin
   CodeStrings.AddRange(MemoSource.Lines.ToStringArray);
 
   MemoResult.Lines.DefaultEncoding := MemoSource.Lines.Encoding;
+
+  Screen.Cursor := crHourGlass;
   MemoResult.Text := FormatDelphiCode('', CodeStrings, FormatterConfig);
+  Screen.Cursor := crDefault;
 end;
 
 
@@ -211,11 +211,7 @@ begin
   end;
 
   if OpenDialogPas.Execute then
-  begin
-    MemoSource.Lines.LoadFromFile(OpenDialogPas.FileName);
-    LabelSourceFile.Caption := OpenDialogPas.FileName;
-    LabelEncoding.Caption := MemoSource.Lines.Encoding.EncodingName;
-  end;
+    LoadFile(OpenDialogPas.FileName);
 end;
 
 
@@ -260,13 +256,20 @@ begin
   begin
     DragQueryFile(h, i, pchr, maxlen);
     FileName := string(pchr);
-    MemoSource.Lines.LoadFromFile(FileName);
-    LabelSourceFile.Caption := FileName;
+
+    LoadFile(FileName);
   end;
 
   DragFinish(h);
 end;
 
+
+procedure TFormDelphiFormatter.LoadFile(FileName: string);
+begin
+  MemoSource.Lines.LoadFromFile(FileName);
+  LabelSourceFile.Caption := FileName;
+  LabelEncoding.Caption := MemoSource.Lines.Encoding.EncodingName;
+end;
 
 //------------------------------------- Config -------------------------------------------
 
