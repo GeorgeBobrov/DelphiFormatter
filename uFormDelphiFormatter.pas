@@ -54,6 +54,7 @@ type
     LabelResultFile: TLabel;
     ButtonSave: TButton;
     OpenDialogDir: TOpenDialog;
+    LabelEncoding: TLabel;
     procedure ButtonProcessClick(Sender: TObject);
     procedure ButtonCopyResultToSourceClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -134,7 +135,8 @@ begin
   Result := RegEx.Replace(Input, '\1 \2');
 end;
 
-function SkipCommentsAndStrings(Input: string; Op: string; var PartToProcess, PartToSkip: string): boolean;
+
+procedure SkipCommentsAndStrings(Input: string; Op: string; var PartToProcess, PartToSkip: string);
 var
   RegEx: TRegEx;
   RegExpStr: string;
@@ -205,7 +207,6 @@ function FormatDelphiCode(Input: string; CodeStrings: TList<string>; FormatterCo
 var
   i: Integer;
   StrList: TStringList;
-  CurLine: string;
   PartToProcess, PartToSkit: string;
 begin
   if (CodeStrings = nil) then
@@ -218,7 +219,7 @@ begin
     CodeStrings.AddRange(StrList.ToStringArray);
   end;
 
-  for i := 0 to CodeStrings.Count - 1 do
+  for i := 0 to CodeStrings.Count - 1 do // process line by line
   begin
     PartToProcess := CodeStrings[i];
     PartToSkit := '';
@@ -240,8 +241,6 @@ end;
 
 procedure TFormDelphiFormatter.ButtonProcessClick(Sender: TObject);
 var
-  KeyWords: TArray<string>;
-  KeyWord: string;
   FormatterConfig: TFormatterConfig;
   CodeStrings: TList<string>;
 begin
@@ -257,6 +256,7 @@ begin
   CodeStrings := TList<string>.Create;
   CodeStrings.AddRange(MemoSource.Lines.ToStringArray);
 
+  MemoResult.Lines.DefaultEncoding := MemoSource.Lines.Encoding;
   MemoResult.Text := FormatDelphiCode('', CodeStrings, FormatterConfig);
 end;
 
@@ -316,6 +316,7 @@ begin
   begin
     MemoSource.Lines.LoadFromFile(SourceFileName);
     LabelSourceFile.Caption := ExpandFileName(SourceFileName);
+    LabelEncoding.Caption := MemoSource.Lines.Encoding.EncodingName;
   end;
 
   if AutoProcessAndClose then
@@ -376,7 +377,11 @@ begin
   end;
 
   if OpenDialogPas.Execute then
+  begin
     MemoSource.Lines.LoadFromFile(OpenDialogPas.FileName);
+    LabelSourceFile.Caption := OpenDialogPas.FileName;
+    LabelEncoding.Caption := MemoSource.Lines.Encoding.EncodingName;
+  end;
 end;
 
 
@@ -517,7 +522,7 @@ begin
       TRegEx.Escape( KeyWords[i]) + ' ' +
       KeyWordsEscaped[i] )
   end;
-  i := 1mod-5xor 7;
+//  i := 1mod-5xor 7;  // test allowed syntax 
 end;
 
 end.

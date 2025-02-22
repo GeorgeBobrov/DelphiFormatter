@@ -1,7 +1,7 @@
 object FormDelphiFormatter: TFormDelphiFormatter
   Left = 0
   Top = 0
-  Caption = 'Delphi Formatter 0.10'
+  Caption = 'Delphi Formatter 1.0'
   ClientHeight = 582
   ClientWidth = 934
   Color = clBtnFace
@@ -235,12 +235,25 @@ object FormDelphiFormatter: TFormDelphiFormatter
     Height = 408
     Align = alLeft
     TabOrder = 0
+    object LabelEncoding: TLabel
+      AlignWithMargins = True
+      Left = 6
+      Top = 392
+      Width = 383
+      Height = 15
+      Margins.Left = 5
+      Margins.Top = 0
+      Margins.Bottom = 0
+      Align = alBottom
+      Caption = '-'
+      ExplicitWidth = 5
+    end
     object MemoSource: TMemo
       AlignWithMargins = True
       Left = 4
       Top = 27
       Width = 385
-      Height = 377
+      Height = 362
       Margins.Top = 1
       Align = alClient
       Font.Charset = DEFAULT_CHARSET
@@ -251,6 +264,7 @@ object FormDelphiFormatter: TFormDelphiFormatter
       ParentFont = False
       ScrollBars = ssBoth
       TabOrder = 1
+      ExplicitHeight = 377
     end
     object PanelSourceTitle: TPanel
       AlignWithMargins = True

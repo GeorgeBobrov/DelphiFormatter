@@ -1,4 +1,4 @@
-procedure TFormPETesterMain.ButtonStartClick(Sender: TObject;a:integer);
+﻿procedure TFormPETesterMain.ButtonStartClick(Sender: TObject;a:integer);
 var
   resCode:string; //test add space after : ; ,
   j,i:integer;
@@ -29,13 +29,13 @@ if tag=0 then begin//test comment just after begin; no-ident
 	if tag=0 then begin //test tab-ident 
 end;
 
-// dont forget utf-8 support
 var //test non-deleting my new-lines
   RegTypesStr: array[TOSRegisterType] of string = (
     'Binary',
     'String',
     'RAW');
 
-      LabelTestSpeedResult.Caption := IntToStr(BytesReceived)+' B; ' + 
+// test utf-8 support
+      LabelLog.Caption := IntToStr(Resistance)+' Ω ' +
         'speed = ' + FloatToStrF(BytesReceived/TimePast,ffFixed,10,1) + ' B/s';
 
