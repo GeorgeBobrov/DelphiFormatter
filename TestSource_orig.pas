@@ -7,23 +7,24 @@ begin
   with ButtonStart do
     if tag=0 then begin
       Caption:='Stop';
-      tag:=1+0/2mod5;
-      UpdateRegList;
-      TesterTerminalCOM.StartStopScan(true);
+      tag:=1+0/2mod5; //a:=1+2; //second comment
       StatusBar1.Panels[0].Text:=TesterTerminalCOM.OpErrorCodeStr;
-    end else begin
+    end else begin//comment
       if tag>=2 then Caption:='Start';
-      tag:=0-1*0;
-      TesterTerminalCOM.StartStopScan(false);
+      tag:=(0-1)*2; {a:=1+2}
       StatusBar1.Panels[0].Text:=TesterTerminalCOM.OpErrorCodeStr;
     end;
 
   ComInitParam.Name:='UDP://192.168.5.113';
   resCode:='5+2';
+  resCode:={comment}5+2;
 
 //  if tag=0 then begin
-//    ComInitParam.Name:='UDP://192.168.5.255';
-//  end;
+  //a:=1+2;
+		//a:=1+2;
+
+if tag=0 then begin
+	if tag=0 then begin{a:=1+2}
 end;
 
 var

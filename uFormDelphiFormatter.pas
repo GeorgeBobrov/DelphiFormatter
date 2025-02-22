@@ -5,9 +5,18 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.RegularExpressions, Vcl.StdCtrls,
-  Vcl.ExtCtrls, Types, StrUtils, IniFiles, IOUtils, ShellAPI;
+  Vcl.ExtCtrls, Types, StrUtils, IniFiles, IOUtils, ShellAPI, Generics.Collections;
 
 type
+  TFormatterConfig = record
+    AddNewLine: Boolean;
+    AddNewLineKeyWords: string;
+    AddSpacesAroundBinOps1: Boolean;
+    AddSpacesAroundBinOpsWord: Boolean;
+    AddSpaceAfterColon: Boolean;
+    AddSpaceAfterColonChars: string;
+  end;
+
   TFormDelphiFormatter = class(TForm)
     MemoSource: TMemo;
     PanelBottom: TPanel;
@@ -27,7 +36,7 @@ type
     Label1: TLabel;
     ButtonFormatAllFilesInDir: TButton;
     ButtonSaveConfig: TButton;
-    PanelSettings: TPanel;
+    PanelConfig: TPanel;
     PanelCommands: TPanel;
     Label3: TLabel;
     ButtonLoadConfig: TButton;
@@ -55,6 +64,7 @@ type
     procedure ButtonSaveClick(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure Splitter1Moved(Sender: TObject);
+    procedure ButtonTestEscapeClick(Sender: TObject);
   private
     { Private declarations }
     procedure WMDropFiles(var Msg: TWMDropFiles); message WM_DROPFILES;
@@ -78,7 +88,7 @@ var
   RegEx: TRegEx;
   RegExpStr: string;
 begin
-  RegExpStr := '( +)(.+?)\b (' + KeyWord + ')';
+  RegExpStr := '([ \t]*)(.+?)\b (' + KeyWord + ')';
   RegEx := TRegEx.Create(RegExpStr, [roMultiLine]);
   Result := RegEx.Replace(Input, '\1\2' + sLineBreak + '\1\3');
 end;
@@ -124,35 +134,57 @@ begin
   Result := RegEx.Replace(Input, '\1 \2');
 end;
 
+function SkipCommentsAndStrings(Input: string; var PartToProcess, PartToSkip: string): boolean;
+var
+  RegEx: TRegEx;
+  RegExpStr: string;
+  Match: TMatch;
+begin
+  RegExpStr := '^(.*?)(\/\/.*)';
+  RegEx := TRegEx.Create(RegExpStr, [roMultiLine]);
+//  PartToProcess := RegEx.Split()
+//  Result := RegEx.Replace(Input, '\1 \2');
+
+  Match := RegEx.Match(Input);
+
+  PartToProcess := Input;
+
+  if Match.Success then
+  begin
+    PartToProcess := Match.Groups[1].Value;
+    PartToSkip := Match.Groups[2].Value + PartToSkip;
+  end
+end;
+
 
 //------------------------------------- Process -------------------------------------------
 
 
-procedure TFormDelphiFormatter.ButtonProcessClick(Sender: TObject);
+function FormatDelphiCodeCleaned(Input: string; FormatterConfig: TFormatterConfig): string;
 var
   KeyWords: TArray<string>;
   FormattedCode: string;
   KeyWord: string;
 begin
-  FormattedCode := MemoSource.Text;
+  FormattedCode := Input;
 
   // Add new line before some KeyWords
-  if CheckBoxAddNewLine.Checked then
+  if FormatterConfig.AddNewLine then
   begin
-    KeyWords := SplitString(EditAddNewLine.Text, ' ');
+    KeyWords := SplitString(FormatterConfig.AddNewLineKeyWords, ' ');
     for KeyWord in KeyWords do
       FormattedCode := AddNewLine(FormattedCode, KeyWord);
   end;
 
   // Add Spaces Around Binary Operators
-  if CheckBoxAddSpacesAroundBinOps1.Checked then
+  if FormatterConfig.AddSpacesAroundBinOps1 then
   begin
     KeyWords := ['\+', '\-', '\*', '\/', '=', '<', '>', '>=', '<=', '<>', ':='];
     for KeyWord in KeyWords do
       FormattedCode := AddSpacesAroundBinaryOperators1(FormattedCode, KeyWord);
   end;
 
-  if CheckBoxAddSpacesAroundBinOpsWord.Checked then
+  if FormatterConfig.AddSpacesAroundBinOpsWord then
   begin
     // Строковые операторы (div, mod, and, or, xor, as, is, in)
     KeyWords := ['div', 'mod', 'and', 'or', 'xor'];
@@ -161,14 +193,73 @@ begin
   end;
 
   // Add Space After Colon
-  if CheckBoxAddSpaceAfterColon.Checked then
+  if FormatterConfig.AddSpaceAfterColon then
   begin
-    KeyWords := SplitString(EditAddSpaceAfterColon.Text, ' ');
+    KeyWords := SplitString(FormatterConfig.AddSpaceAfterColonChars, ' ');
     for KeyWord in KeyWords do
       FormattedCode := AddSpaceAfterColon(FormattedCode, KeyWord);
   end;
 
-  MemoResult.Text := FormattedCode;
+  Result := FormattedCode;
+end;
+
+
+function FormatDelphiCode(Input: string; CodeStrings: TList<string>; FormatterConfig: TFormatterConfig): string;
+var
+  i: Integer;
+  StrList: TStringList;
+  CurLine: string;
+  PartToProcess, PartToSkit: string;
+begin
+  if (CodeStrings = nil) then
+  begin
+    CodeStrings := TList<string>.Create;
+
+    StrList := TStringList.Create;
+    StrList.Text := Input;
+
+    CodeStrings.AddRange(StrList.ToStringArray);
+  end;
+
+  for i := 0 to CodeStrings.Count - 1 do
+  begin
+    CurLine := CodeStrings[i];
+    // Skip Comments
+    PartToSkit := '';
+    SkipCommentsAndStrings(CurLine, PartToProcess, PartToSkit);
+    // Skip Strings
+//    SkipCommentsAndStrings(CurLine, PartToProcess, PartToSkit);
+
+    PartToProcess := FormatDelphiCodeCleaned(PartToProcess, FormatterConfig);
+    CodeStrings[i] := PartToProcess + PartToSkit;
+  end;
+
+  for i := 0 to CodeStrings.Count - 1 do
+    Result := Result + CodeStrings[i] + sLineBreak;
+//    MemoResult.Lines.Add(CodeStrings[i])
+end;
+
+
+procedure TFormDelphiFormatter.ButtonProcessClick(Sender: TObject);
+var
+  KeyWords: TArray<string>;
+  KeyWord: string;
+  FormatterConfig: TFormatterConfig;
+  CodeStrings: TList<string>;
+begin
+  FormatterConfig.AddNewLine := CheckBoxAddNewLine.Checked;
+  FormatterConfig.AddNewLineKeyWords := EditAddNewLine.Text;
+
+  FormatterConfig.AddNewLine := CheckBoxAddNewLine.Checked;
+  FormatterConfig.AddNewLine := CheckBoxAddNewLine.Checked;
+
+  FormatterConfig.AddNewLine := CheckBoxAddNewLine.Checked;
+  FormatterConfig.AddSpaceAfterColonChars := EditAddSpaceAfterColon.Text;
+
+  CodeStrings := TList<string>.Create;
+  CodeStrings.AddRange(MemoSource.Lines.ToStringArray);
+
+  MemoResult.Text := FormatDelphiCode('', CodeStrings, FormatterConfig);
 end;
 
 
@@ -409,6 +500,25 @@ end;
 procedure TFormDelphiFormatter.Splitter1Moved(Sender: TObject);
 begin
   PanelsWidthRatio := (PanelSource.Width + 2) / Self.Width;
+end;
+
+//------------------------------------- tests -------------------------------------------
+
+
+procedure TFormDelphiFormatter.ButtonTestEscapeClick(Sender: TObject);
+var
+  KeyWords, KeyWordsEscaped: TArray<string>;
+  i: integer;
+begin
+  KeyWords := ['+', '-', '*', '/', '=', '<', '>', '>=', '<=', '<>', ':='];
+  KeyWordsEscaped := ['\+', '\-', '\*', '\/', '=', '<', '>', '>=', '<=', '<>', ':='];
+  MemoProcessedFiles.Visible := true;
+  for i := 0 to Length(KeyWords) - 1 do
+  begin
+    MemoProcessedFiles.Lines.Add(KeyWords[i] + ' ' +
+      TRegEx.Escape( KeyWords[i]) + ' ' +
+      KeyWordsEscaped[i] )
+  end;
 end;
 
 end.
