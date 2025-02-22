@@ -2,7 +2,8 @@ program DelphiFormatter;
 
 uses
   Vcl.Forms,
-  uFormDelphiFormatter in 'uFormDelphiFormatter.pas' {FormDelphiFormatter};
+  uFormDelphiFormatter in 'uFormDelphiFormatter.pas' {FormDelphiFormatter},
+  uDelphiFormatter in 'uDelphiFormatter.pas';
 
 {$R *.res}
 

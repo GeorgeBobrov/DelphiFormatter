@@ -1,7 +1,7 @@
 object FormDelphiFormatter: TFormDelphiFormatter
   Left = 0
   Top = 0
-  Caption = 'Delphi Formatter 1.0'
+  Caption = 'Delphi Formatter 1.1'
   ClientHeight = 582
   ClientWidth = 934
   Color = clBtnFace
@@ -264,7 +264,6 @@ object FormDelphiFormatter: TFormDelphiFormatter
       ParentFont = False
       ScrollBars = ssBoth
       TabOrder = 1
-      ExplicitHeight = 377
     end
     object PanelSourceTitle: TPanel
       AlignWithMargins = True
