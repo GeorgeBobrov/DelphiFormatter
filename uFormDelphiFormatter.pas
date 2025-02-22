@@ -99,11 +99,11 @@ var
   RegEx: TRegEx;
   RegExpStr: string;
 begin
-  RegExpStr := '([A-Za-z_\d''"])(' + Op + ')';
+  RegExpStr := '([A-Za-z_\d''")])(' + Op + ')';
   RegEx := TRegEx.Create(RegExpStr, [roMultiLine]);
   Result := RegEx.Replace(Input, '\1 \2');
 
-  RegExpStr := '(' + Op + ')([A-Za-z_\d''"])';
+  RegExpStr := '(' + Op + ')([-A-Za-z_\d''"(])';
   RegEx := TRegEx.Create(RegExpStr, [roMultiLine]);
   Result := RegEx.Replace(Result, '\1 \2');
 end;
@@ -134,17 +134,14 @@ begin
   Result := RegEx.Replace(Input, '\1 \2');
 end;
 
-function SkipCommentsAndStrings(Input: string; var PartToProcess, PartToSkip: string): boolean;
+function SkipCommentsAndStrings(Input: string; Op: string; var PartToProcess, PartToSkip: string): boolean;
 var
   RegEx: TRegEx;
   RegExpStr: string;
   Match: TMatch;
 begin
-  RegExpStr := '^(.*?)(\/\/.*)';
+  RegExpStr := '^(.*?)(' + Op + '.*)';
   RegEx := TRegEx.Create(RegExpStr, [roMultiLine]);
-//  PartToProcess := RegEx.Split()
-//  Result := RegEx.Replace(Input, '\1 \2');
-
   Match := RegEx.Match(Input);
 
   PartToProcess := Input;
@@ -223,12 +220,13 @@ begin
 
   for i := 0 to CodeStrings.Count - 1 do
   begin
-    CurLine := CodeStrings[i];
-    // Skip Comments
+    PartToProcess := CodeStrings[i];
     PartToSkit := '';
-    SkipCommentsAndStrings(CurLine, PartToProcess, PartToSkit);
+    // Skip Comments
+    SkipCommentsAndStrings(PartToProcess, '\/\/', PartToProcess, PartToSkit);
+    SkipCommentsAndStrings(PartToProcess, '{', PartToProcess, PartToSkit);
     // Skip Strings
-//    SkipCommentsAndStrings(CurLine, PartToProcess, PartToSkit);
+    SkipCommentsAndStrings(PartToProcess, '''', PartToProcess, PartToSkit);
 
     PartToProcess := FormatDelphiCodeCleaned(PartToProcess, FormatterConfig);
     CodeStrings[i] := PartToProcess + PartToSkit;
@@ -519,6 +517,7 @@ begin
       TRegEx.Escape( KeyWords[i]) + ' ' +
       KeyWordsEscaped[i] )
   end;
+  i := 1mod-5xor 7;
 end;
 
 end.

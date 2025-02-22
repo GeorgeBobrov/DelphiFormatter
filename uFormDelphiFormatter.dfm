@@ -1,7 +1,7 @@
 object FormDelphiFormatter: TFormDelphiFormatter
   Left = 0
   Top = 0
-  Caption = 'Delphi Formatter 0.9'
+  Caption = 'Delphi Formatter 0.10'
   ClientHeight = 582
   ClientWidth = 934
   Color = clBtnFace
@@ -30,8 +30,6 @@ object FormDelphiFormatter: TFormDelphiFormatter
     Height = 174
     Align = alBottom
     TabOrder = 1
-    ExplicitTop = 415
-    ExplicitWidth = 938
     object PanelConfig: TPanel
       Left = 1
       Top = 1
@@ -166,7 +164,6 @@ object FormDelphiFormatter: TFormDelphiFormatter
       Height = 172
       Align = alClient
       TabOrder = 1
-      ExplicitWidth = 656
       object MemoProcessedFiles: TMemo
         AlignWithMargins = True
         Left = 4
@@ -180,7 +177,6 @@ object FormDelphiFormatter: TFormDelphiFormatter
         ScrollBars = ssBoth
         TabOrder = 1
         Visible = False
-        ExplicitWidth = 648
       end
       object FlowPanel1: TFlowPanel
         AlignWithMargins = True
@@ -193,7 +189,6 @@ object FormDelphiFormatter: TFormDelphiFormatter
         AutoSize = True
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitWidth = 648
         object ButtonProcess: TButton
           AlignWithMargins = True
           Left = 3
@@ -240,7 +235,6 @@ object FormDelphiFormatter: TFormDelphiFormatter
     Height = 408
     Align = alLeft
     TabOrder = 0
-    ExplicitHeight = 415
     object MemoSource: TMemo
       AlignWithMargins = True
       Left = 4
@@ -257,7 +251,6 @@ object FormDelphiFormatter: TFormDelphiFormatter
       ParentFont = False
       ScrollBars = ssBoth
       TabOrder = 1
-      ExplicitHeight = 384
     end
     object PanelSourceTitle: TPanel
       AlignWithMargins = True
@@ -330,8 +323,6 @@ object FormDelphiFormatter: TFormDelphiFormatter
     Align = alClient
     Caption = 'PanelResult'
     TabOrder = 2
-    ExplicitWidth = 542
-    ExplicitHeight = 415
     object MemoResult: TMemo
       AlignWithMargins = True
       Left = 4
@@ -348,8 +339,6 @@ object FormDelphiFormatter: TFormDelphiFormatter
       ParentFont = False
       ScrollBars = ssBoth
       TabOrder = 1
-      ExplicitWidth = 534
-      ExplicitHeight = 384
     end
     object PanelResultTitle: TPanel
       AlignWithMargins = True
@@ -364,7 +353,6 @@ object FormDelphiFormatter: TFormDelphiFormatter
       Align = alTop
       BevelOuter = bvNone
       TabOrder = 0
-      ExplicitWidth = 536
       object Label4: TLabel
         AlignWithMargins = True
         Left = 5
@@ -412,7 +400,6 @@ object FormDelphiFormatter: TFormDelphiFormatter
         Caption = 'Save'
         TabOrder = 0
         OnClick = ButtonSaveClick
-        ExplicitLeft = 461
       end
     end
   end

@@ -1,40 +1,41 @@
-procedure TFormPETesterMain.ButtonStartClick(Sender: TObject);
+procedure TFormPETesterMain.ButtonStartClick(Sender: TObject;a:integer);
 var
-  resCode:string;
+  resCode:string; //test add space after : ; ,
   j,i:integer;
 begin
   if TesterTerminalCOM<>nil then
   with ButtonStart do
     if tag=0 then begin
-      Caption:='Stop';
-      tag:=1+0/2mod5; //a:=1+2; //second comment
+      Caption:='Stop 1+2'; //test non-interference with strings
+      tag:=1+2+3*4*5/6/7; //test add spaces aroung binary operators
+      tag:=-1+2+3mod 4xor-5; //a:=1+2; //test non-interference with slash-comments
       StatusBar1.Panels[0].Text:=TesterTerminalCOM.OpErrorCodeStr;
-    end else begin//comment
-      if tag>=2 then Caption:='Start';
-      tag:=(0-1)*2; {a:=1+2}
+    end else begin 
+      if tag>=-2 then Caption:='Start UDP://192.168.5.113';
+      tag:=(0-1)*(2-3); {a:=1+2; test non-interference with old-comments; also test brackets}
       StatusBar1.Panels[0].Text:=TesterTerminalCOM.OpErrorCodeStr;
     end;
 
-  ComInitParam.Name:='UDP://192.168.5.113';
-  resCode:='5+2';
-  resCode:={comment}5+2;
+  resCode:='1+2'+'3'; //test binary operators after strings
+  resCode:={comment}5+2; //test binary operators after comments
 
-//  if tag=0 then begin
-  //a:=1+2;
-		//a:=1+2;
+//test comments with diferent idents
+//a:=1+2; // no-ident
+  //a:=1+2; // space-ident
+		//a:=1+2; // tab-ident 
 
-if tag=0 then begin
-	if tag=0 then begin{a:=1+2}
+//test AddNewLine before begin with diferent idents
+if tag=0 then begin//test comment just after begin; no-ident
+	if tag=0 then begin //test tab-ident 
 end;
 
-var
+// dont forget utf-8 support
+var //test non-deleting my new-lines
   RegTypesStr: array[TOSRegisterType] of string = (
     'Binary',
     'String',
     'RAW');
 
-      LabelTestSpeedResult.Caption := IntToStr(BytesReceived) +  ' B; ' + FloatToStrF(TimePast, ffFixed, 10, 3)  + ' s; '  +
-        IntToStr(OperationsCount)+ ' op;'#9#9 +
-        'speed = ' + FloatToStrF(BytesReceived / TimePast, ffFixed, 10, 1) + ' B/s'#9#9 +
-        'period = ' + FloatToStrF(1000 * TimePast / OperationsCount, ffFixed, 10, 1) + ' ms';
+      LabelTestSpeedResult.Caption := IntToStr(BytesReceived)+' B; ' + 
+        'speed = ' + FloatToStrF(BytesReceived/TimePast,ffFixed,10,1) + ' B/s';
 
