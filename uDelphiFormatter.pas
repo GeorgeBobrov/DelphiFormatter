@@ -34,11 +34,11 @@ var
   RegEx: TRegEx;
   RegExpStr: string;
 begin
-  RegExpStr := '([A-Za-z_\d''")])(' + Op + ')';
+  RegExpStr := '([A-Za-z_\d''"\])])(' + Op + ')';
   RegEx := TRegEx.Create(RegExpStr, [roMultiLine]);
   Result := RegEx.Replace(Input, '\1 \2');
 
-  RegExpStr := '(' + Op + ')([-A-Za-z_\d''"(])';
+  RegExpStr := '(' + Op + ')([-A-Za-z_\d''"([])';
   RegEx := TRegEx.Create(RegExpStr, [roMultiLine]);
   Result := RegEx.Replace(Result, '\1 \2');
 end;

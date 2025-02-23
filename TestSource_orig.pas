@@ -10,7 +10,7 @@ begin
       Caption:='Stop 1+2'; //test non-interference with strings
       tag:=1+2+3*4*5/6/7; //test add spaces aroung binary operators
       tag:=-1+2+3mod 4xor-5; //a:=1+2; //test non-interference with slash-comments
-      StatusBar1.Panels[0].Text:=TesterTerminalCOM.OpErrorCodeStr;
+      StatusBar1.Panels[0]:=[1,2,3]; //test square-brackets
     end else begin 
       if tag>=-2 then Caption:='Start UDP://192.168.5.113';
       tag:=(0-1)*(2-3); {a:=1+2; test non-interference with old-comments; also test brackets}
@@ -19,6 +19,8 @@ begin
 
   resCode:='1+2'+'3'; //test binary operators after strings
   resCode:={comment}5+2; //test binary operators after comments
+  resCode:=6.0415E-03; //test float e-notation
+  resCode:=Command53+1;
 
 //test comments with diferent idents
 //a:=1+2; // no-ident

@@ -29,7 +29,6 @@ type
     ButtonSaveConfig: TButton;
     PanelConfig: TPanel;
     PanelCommands: TPanel;
-    Label3: TLabel;
     ButtonLoadConfig: TButton;
     OpenDialogConfig: TOpenDialog;
     SaveDialogConfig: TSaveDialog;
@@ -46,6 +45,11 @@ type
     ButtonSave: TButton;
     OpenDialogDir: TOpenDialog;
     LabelEncoding: TLabel;
+    PanelEncoding: TPanel;
+    Label2: TLabel;
+    PanelConfigTitle: TPanel;
+    Label5: TLabel;
+    LabelConfigFile: TLabel;
     procedure ButtonProcessClick(Sender: TObject);
     procedure ButtonCopyResultToSourceClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -57,6 +61,7 @@ type
     procedure FormResize(Sender: TObject);
     procedure Splitter1Moved(Sender: TObject);
     procedure ButtonTestEscapeClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
     procedure WMDropFiles(var Msg: TWMDropFiles); message WM_DROPFILES;
@@ -137,6 +142,13 @@ begin
 end;
 
 
+procedure TFormDelphiFormatter.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  SaveDialogConfig.FileName := ChangeFileExt(Application.ExeName, '.conf');
+  SaveConfig(SaveDialogConfig.FileName);
+end;
+
+
 procedure TFormDelphiFormatter.ButtonProcessClick(Sender: TObject);
 var
   FormatterConfig: TFormatterConfig;
@@ -145,10 +157,10 @@ begin
   FormatterConfig.AddNewLine := CheckBoxAddNewLine.Checked;
   FormatterConfig.AddNewLineKeyWords := EditAddNewLine.Text;
 
-  FormatterConfig.AddNewLine := CheckBoxAddNewLine.Checked;
-  FormatterConfig.AddNewLine := CheckBoxAddNewLine.Checked;
+  FormatterConfig.AddSpacesAroundBinOps1 := CheckBoxAddSpacesAroundBinOps1.Checked;
+  FormatterConfig.AddSpacesAroundBinOpsWord := CheckBoxAddSpacesAroundBinOpsWord.Checked;
 
-  FormatterConfig.AddNewLine := CheckBoxAddNewLine.Checked;
+  FormatterConfig.AddSpaceAfterColon := CheckBoxAddSpaceAfterColon.Checked;
   FormatterConfig.AddSpaceAfterColonChars := EditAddSpaceAfterColon.Text;
 
   CodeStrings := TList<string>.Create;
@@ -184,8 +196,7 @@ begin
     for FileName in TDirectory.GetFiles(CurDir, '*.pas') do
       if (FileName <> '') then
       begin
-        MemoSource.Lines.LoadFromFile(FileName);
-        LabelSourceFile.Caption := FileName;
+        LoadFile(FileName);
 
         ButtonProcessClick(Self);
 
@@ -250,7 +261,7 @@ begin
   h := Msg.Drop;
 
   num := DragQueryFile(h, Dword(- 1), nil, 0);
-  if num > 1 then num := 1; //dont process multiple drops
+  if num > 1 then num := 1; //dont process multiple-file drops
 
   for i := 0 to num - 1 do
   begin
@@ -305,6 +316,8 @@ begin
   EditAddSpaceAfterColon.Text := IniFile.ReadString('Common', 'AddSpaceAfterColonList', EditAddSpaceAfterColon.Text);
 
   FreeAndNil(IniFile);
+
+  LabelConfigFile.Caption := ExtractFileName(IniFileName);
 end;
 
 
@@ -359,7 +372,11 @@ begin
 //      TRegEx.Escape( KeyWords[i]) + ' ' +
 //      KeyWordsEscaped[i] )
   end;
-//  i := 1mod-5xor 7;  // test allowed syntax 
+//  i := 1mod-5xor 7;  // test allowed syntax
+
+// TODO
+// Command53
+// 6.0415E - 03
 end;
 
 end.

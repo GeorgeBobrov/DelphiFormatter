@@ -1,7 +1,7 @@
 object FormDelphiFormatter: TFormDelphiFormatter
   Left = 0
   Top = 0
-  Caption = 'Delphi Formatter 1.1'
+  Caption = 'Delphi Formatter 1.3'
   ClientHeight = 582
   ClientWidth = 934
   Color = clBtnFace
@@ -10,6 +10,7 @@ object FormDelphiFormatter: TFormDelphiFormatter
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  OnClose = FormClose
   OnCreate = FormCreate
   OnResize = FormResize
   TextHeight = 15
@@ -37,28 +38,6 @@ object FormDelphiFormatter: TFormDelphiFormatter
       Height = 172
       Align = alLeft
       TabOrder = 0
-      object Label3: TLabel
-        Left = 7
-        Top = 8
-        Width = 41
-        Height = 17
-        Caption = 'Config'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Segoe UI'
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
-      object ButtonSaveConfig: TButton
-        Left = 183
-        Top = 5
-        Width = 89
-        Height = 25
-        Caption = 'Save Config'
-        TabOrder = 6
-        OnClick = ButtonSaveConfigClick
-      end
       object CheckBoxAddNewLine: TCheckBox
         Left = 9
         Top = 40
@@ -67,7 +46,7 @@ object FormDelphiFormatter: TFormDelphiFormatter
         Caption = 'Add new line before:'
         Checked = True
         State = cbChecked
-        TabOrder = 1
+        TabOrder = 0
       end
       object CheckBoxAddSpaceAfterColon: TCheckBox
         Left = 9
@@ -77,7 +56,7 @@ object FormDelphiFormatter: TFormDelphiFormatter
         Caption = 'Add Space after:'
         Checked = True
         State = cbChecked
-        TabOrder = 4
+        TabOrder = 3
       end
       object EditAddNewLine: TEdit
         Left = 145
@@ -90,7 +69,7 @@ object FormDelphiFormatter: TFormDelphiFormatter
         Font.Name = 'Consolas'
         Font.Style = []
         ParentFont = False
-        TabOrder = 2
+        TabOrder = 1
         Text = 'begin else'
       end
       object EditAddSpaceAfterColon: TEdit
@@ -104,7 +83,7 @@ object FormDelphiFormatter: TFormDelphiFormatter
         Font.Name = 'Consolas'
         Font.Style = []
         ParentFont = False
-        TabOrder = 5
+        TabOrder = 4
         Text = ': ; ,'
       end
       object GroupBox2: TGroupBox
@@ -113,7 +92,7 @@ object FormDelphiFormatter: TFormDelphiFormatter
         Width = 264
         Height = 61
         Caption = 'Add Spaces Around Binary Operators:'
-        TabOrder = 3
+        TabOrder = 2
         object CheckBoxAddSpacesAroundBinOpsWord: TCheckBox
           Left = 12
           Top = 38
@@ -147,14 +126,81 @@ object FormDelphiFormatter: TFormDelphiFormatter
           TabOrder = 0
         end
       end
-      object ButtonLoadConfig: TButton
-        Left = 87
-        Top = 5
-        Width = 90
-        Height = 25
-        Caption = 'Load Config'
-        TabOrder = 0
-        OnClick = ButtonLoadConfigClick
+      object PanelConfigTitle: TPanel
+        AlignWithMargins = True
+        Left = 3
+        Top = 3
+        Width = 274
+        Height = 22
+        Margins.Left = 2
+        Margins.Top = 2
+        Margins.Right = 2
+        Margins.Bottom = 1
+        Align = alTop
+        BevelOuter = bvNone
+        TabOrder = 5
+        ExplicitLeft = 6
+        ExplicitTop = 11
+        object Label5: TLabel
+          AlignWithMargins = True
+          Left = 5
+          Top = 1
+          Width = 45
+          Height = 20
+          Margins.Left = 5
+          Margins.Top = 1
+          Margins.Bottom = 1
+          Align = alLeft
+          Caption = 'Config:'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Segoe UI'
+          Font.Style = [fsBold]
+          ParentFont = False
+          Layout = tlCenter
+          ExplicitHeight = 17
+        end
+        object LabelConfigFile: TLabel
+          AlignWithMargins = True
+          Left = 58
+          Top = 2
+          Width = 133
+          Height = 19
+          Margins.Left = 5
+          Margins.Top = 2
+          Margins.Bottom = 1
+          Align = alClient
+          AutoSize = False
+          EllipsisPosition = epPathEllipsis
+          Layout = tlCenter
+          ExplicitLeft = 54
+          ExplicitTop = 1
+          ExplicitWidth = 3
+          ExplicitHeight = 15
+        end
+        object ButtonLoadConfig: TButton
+          Left = 194
+          Top = 0
+          Width = 40
+          Height = 22
+          Align = alRight
+          Caption = 'Load'
+          TabOrder = 0
+          OnClick = ButtonLoadConfigClick
+          ExplicitLeft = 159
+        end
+        object ButtonSaveConfig: TButton
+          Left = 234
+          Top = 0
+          Width = 40
+          Height = 22
+          Align = alRight
+          Caption = 'Save'
+          TabOrder = 1
+          OnClick = ButtonSaveConfigClick
+          ExplicitLeft = 179
+        end
       end
     end
     object PanelCommands: TPanel
@@ -235,25 +281,12 @@ object FormDelphiFormatter: TFormDelphiFormatter
     Height = 408
     Align = alLeft
     TabOrder = 0
-    object LabelEncoding: TLabel
-      AlignWithMargins = True
-      Left = 6
-      Top = 392
-      Width = 383
-      Height = 15
-      Margins.Left = 5
-      Margins.Top = 0
-      Margins.Bottom = 0
-      Align = alBottom
-      Caption = '-'
-      ExplicitWidth = 5
-    end
     object MemoSource: TMemo
       AlignWithMargins = True
       Left = 4
       Top = 27
       Width = 385
-      Height = 362
+      Height = 360
       Margins.Top = 1
       Align = alClient
       Font.Charset = DEFAULT_CHARSET
@@ -264,6 +297,7 @@ object FormDelphiFormatter: TFormDelphiFormatter
       ParentFont = False
       ScrollBars = ssBoth
       TabOrder = 1
+      ExplicitHeight = 362
     end
     object PanelSourceTitle: TPanel
       AlignWithMargins = True
@@ -325,6 +359,46 @@ object FormDelphiFormatter: TFormDelphiFormatter
         Caption = 'Open'
         TabOrder = 0
         OnClick = ButtonOpenClick
+      end
+    end
+    object PanelEncoding: TPanel
+      Left = 1
+      Top = 390
+      Width = 391
+      Height = 17
+      Align = alBottom
+      BevelOuter = bvNone
+      TabOrder = 2
+      ExplicitLeft = 80
+      ExplicitTop = 392
+      ExplicitWidth = 41
+      object Label2: TLabel
+        AlignWithMargins = True
+        Left = 5
+        Top = 0
+        Width = 53
+        Height = 17
+        Margins.Left = 5
+        Margins.Top = 0
+        Margins.Bottom = 0
+        Align = alLeft
+        Caption = 'Encoding:'
+        ExplicitLeft = 0
+        ExplicitHeight = 15
+      end
+      object LabelEncoding: TLabel
+        AlignWithMargins = True
+        Left = 66
+        Top = 0
+        Width = 322
+        Height = 17
+        Margins.Left = 5
+        Margins.Top = 0
+        Margins.Bottom = 0
+        Align = alClient
+        Caption = '-'
+        ExplicitWidth = 5
+        ExplicitHeight = 15
       end
     end
   end
