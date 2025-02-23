@@ -374,9 +374,6 @@ begin
   end;
 //  i := 1mod-5xor 7;  // test allowed syntax
 
-// TODO
-// Command53
-// 6.0415E - 03
 end;
 
 end.

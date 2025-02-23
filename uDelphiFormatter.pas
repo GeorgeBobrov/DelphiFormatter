@@ -24,38 +24,54 @@ var
   RegExpStr: string;
 begin
   RegExpStr := '([ \t]*)(.+?)\b (' + KeyWord + ')';
-  RegEx := TRegEx.Create(RegExpStr, [roMultiLine]);
+  RegEx := TRegEx.Create(RegExpStr, [roMultiLine, roIgnoreCase]);
   Result := RegEx.Replace(Input, '\1\2' + sLineBreak + '\1\3');
 end;
 
 
-function AddSpacesAroundBinaryOperators1(Input: string; Op: string): string;
+function AddSpacesAroundBinaryOperatorSymbol(Input: string; Op: string): string;
 var
   RegEx: TRegEx;
   RegExpStr: string;
 begin
-  RegExpStr := '([A-Za-z_\d''"\])])(' + Op + ')';
-  RegEx := TRegEx.Create(RegExpStr, [roMultiLine]);
+  RegExpStr := '([\w''"\])])(' + Op + ')';
+  RegEx := TRegEx.Create(RegExpStr, [roMultiLine, roIgnoreCase]);
   Result := RegEx.Replace(Input, '\1 \2');
 
-  RegExpStr := '(' + Op + ')([-A-Za-z_\d''"([])';
-  RegEx := TRegEx.Create(RegExpStr, [roMultiLine]);
+  RegExpStr := '(' + Op + ')([-\w''"([])';
+  RegEx := TRegEx.Create(RegExpStr, [roMultiLine, roIgnoreCase]);
   Result := RegEx.Replace(Result, '\1 \2');
 end;
 
 
-function AddSpacesAroundBinaryOperatorsWord(Input: string; Op: string): string;
+function AddSpacesAroundOperatorSymbol(Input: string; Op: string): string;
+var
+  RegEx: TRegEx;
+  RegExpStr: string;
+  Match: TMatch;
+begin
+  RegExpStr := '([^e=( ])(' + Op + ')';
+  RegEx := TRegEx.Create(RegExpStr, [roMultiLine, roIgnoreCase]);
+  Result := RegEx.Replace(Input, '\1 \2');
+
+  RegExpStr := '([^e=(])(' + Op + ')([-\w''"([])';
+  RegEx := TRegEx.Create(RegExpStr, [roMultiLine, roIgnoreCase]);
+  Result := RegEx.Replace(Result, '\1\2 \3');
+end;
+
+
+function AddSpacesAroundBinaryOperatorWord(Input: string; Op: string): string;
 var
   RegEx: TRegEx;
   RegExpStr: string;
 begin
   RegExpStr := '([\d])(' + Op + ')';
-  RegEx := TRegEx.Create(RegExpStr, [roMultiLine]);
+  RegEx := TRegEx.Create(RegExpStr, [roMultiLine, roIgnoreCase]);
   Result := RegEx.Replace(Input, '\1 \2');
 
-  RegExpStr := '(' + Op + ')([\d])';
-  RegEx := TRegEx.Create(RegExpStr, [roMultiLine]);
-  Result := RegEx.Replace(Result, '\1 \2');
+//  RegExpStr := '(\b' + Op + '\b)([\d])';
+//  RegEx := TRegEx.Create(RegExpStr, [roMultiLine, roIgnoreCase]);
+//  Result := RegEx.Replace(Result, '\1 \2');
 end;
 
 
@@ -64,8 +80,8 @@ var
   RegEx: TRegEx;
   RegExpStr: string;
 begin
-  RegExpStr := '(' + Op + ')([A-Za-z_\d''"])';
-  RegEx := TRegEx.Create(RegExpStr, [roMultiLine]);
+  RegExpStr := '(' + Op + ')([\w''"])';
+  RegEx := TRegEx.Create(RegExpStr, [roMultiLine, roIgnoreCase]);
   Result := RegEx.Replace(Input, '\1 \2');
 end;
 
@@ -112,19 +128,22 @@ begin
   // Add Spaces Around Binary Operators
   if FormatterConfig.AddSpacesAroundBinOps1 then
   begin
-    KeyWords := ['\+', '\-', '\*', '\/', '=', '>=', '<=', '<>', ':='];
+    KeyWords := ['\*', '\/', '=', '>=', '<=', '<>', ':='];
     for KeyWord in KeyWords do
-      FormattedCode := AddSpacesAroundBinaryOperators1(FormattedCode, KeyWord);
+      FormattedCode := AddSpacesAroundBinaryOperatorSymbol(FormattedCode, KeyWord);
 
     // Workaround for < > in Generics, like TList<Byte>
     if ContainsText(FormattedCode, 'if') then
     begin
       KeyWords := ['<', '>'];
       for KeyWord in KeyWords do
-        FormattedCode := AddSpacesAroundBinaryOperators1(FormattedCode, KeyWord);
+        FormattedCode := AddSpacesAroundBinaryOperatorSymbol(FormattedCode, KeyWord);
     end;
-  end;
 
+    KeyWords := ['\+', '\-'];   // Operator may be unary or binary
+    for KeyWord in KeyWords do
+      FormattedCode := AddSpacesAroundOperatorSymbol(FormattedCode, KeyWord);
+  end;
 
 
   if FormatterConfig.AddSpacesAroundBinOpsWord then
@@ -132,7 +151,7 @@ begin
     // Строковые операторы (div, mod, and, or, xor, as, is, in)
     KeyWords := ['div', 'mod', 'and', 'or', 'xor'];
     for KeyWord in KeyWords do
-      FormattedCode := AddSpacesAroundBinaryOperatorsWord(FormattedCode, KeyWord);
+      FormattedCode := AddSpacesAroundBinaryOperatorWord(FormattedCode, KeyWord);
   end;
 
   // Add Space After Colon

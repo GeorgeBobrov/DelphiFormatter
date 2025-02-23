@@ -1,7 +1,7 @@
 object FormDelphiFormatter: TFormDelphiFormatter
   Left = 0
   Top = 0
-  Caption = 'Delphi Formatter 1.3'
+  Caption = 'Delphi Formatter 1.4'
   ClientHeight = 582
   ClientWidth = 934
   Color = clBtnFace
