@@ -19,7 +19,7 @@ begin
 
   resCode:='1+2'+'3'; //test binary operators after strings
   resCode:={comment}5+2; //test binary operators after comments
-  resCode:=6.0415E-03; //test float e-notation
+  resCode:=6.0415E-03+(-1)*-1; //test float e-notation
   resCode:=Command53+1;
 
 //test comments with diferent idents

@@ -49,13 +49,17 @@ var
   RegEx: TRegEx;
   RegExpStr: string;
 begin
-  RegExpStr := '([^e=( ])(' + Op + ')';
+  RegExpStr := '([^e( ])(' + Op + ')';
   RegEx := TRegEx.Create(RegExpStr, [roMultiLine, roIgnoreCase]);
   Result := RegEx.Replace(Input, '\1 \2');
 
-  RegExpStr := '([^e=(])(' + Op + ')([-\w''"([])';
+  RegExpStr := '([^e=<>(\*\/ ])( *)(' + Op + ')([\w''"([])';
   RegEx := TRegEx.Create(RegExpStr, [roMultiLine, roIgnoreCase]);
-  Result := RegEx.Replace(Result, '\1\2 \3');
+  Result := RegEx.Replace(Result, '\1\2\3 \4');
+
+  // Process one more time, because one of 4 match groups may capture next operator sequence,
+  // and than that next operator will be unprocessed
+  Result := RegEx.Replace(Result, '\1\2\3 \4');
 end;
 
 
@@ -67,10 +71,6 @@ begin
   RegExpStr := '([\d])(' + Op + ')';
   RegEx := TRegEx.Create(RegExpStr, [roMultiLine, roIgnoreCase]);
   Result := RegEx.Replace(Input, '\1 \2');
-
-//  RegExpStr := '(\b' + Op + '\b)([\d])';
-//  RegEx := TRegEx.Create(RegExpStr, [roMultiLine, roIgnoreCase]);
-//  Result := RegEx.Replace(Result, '\1 \2');
 end;
 
 
