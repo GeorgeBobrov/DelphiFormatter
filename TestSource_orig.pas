@@ -39,12 +39,13 @@ var //test non-deleting my new-lines
     (RegAdr: regSerial;          RegType: rtU16;     RegReadOnly: False)
     );
 
-// test utf-8 support
-      LabelLog.Caption := IntToStr(Resistance)+' Ω ' +
+
+      LabelLog.Caption := IntToStr(Resistance) + ' Ω ' +// test utf-8 support
         'speed = ' + FloatToStrF(BytesReceived/TimePast,ffFixed,10,1) + ' B/s';
+'a'+a+'a''b'+b+'b'        
 
     case RegType of
-      rtU8: begin
+      rtU8: begin //dont process after :
               U8 := Value;
               Move(U8, Pointer(RawData)^, Size);
             end;        

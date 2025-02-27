@@ -1,7 +1,7 @@
 object FormDelphiFormatter: TFormDelphiFormatter
   Left = 0
   Top = 0
-  Caption = 'Delphi Formatter 1.4'
+  Caption = 'Delphi Formatter 1.5'
   ClientHeight = 582
   ClientWidth = 934
   Color = clBtnFace
@@ -10,9 +10,11 @@ object FormDelphiFormatter: TFormDelphiFormatter
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  OldCreateOrder = False
   OnClose = FormClose
   OnCreate = FormCreate
   OnResize = FormResize
+  PixelsPerInch = 96
   TextHeight = 15
   object Splitter1: TSplitter
     Left = 393
@@ -139,8 +141,6 @@ object FormDelphiFormatter: TFormDelphiFormatter
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 5
-        ExplicitLeft = 6
-        ExplicitTop = 11
         object Label5: TLabel
           AlignWithMargins = True
           Left = 5
@@ -188,7 +188,6 @@ object FormDelphiFormatter: TFormDelphiFormatter
           Caption = 'Load'
           TabOrder = 0
           OnClick = ButtonLoadConfigClick
-          ExplicitLeft = 159
         end
         object ButtonSaveConfig: TButton
           Left = 234
@@ -199,7 +198,6 @@ object FormDelphiFormatter: TFormDelphiFormatter
           Caption = 'Save'
           TabOrder = 1
           OnClick = ButtonSaveConfigClick
-          ExplicitLeft = 179
         end
       end
     end
@@ -297,7 +295,6 @@ object FormDelphiFormatter: TFormDelphiFormatter
       ParentFont = False
       ScrollBars = ssBoth
       TabOrder = 1
-      ExplicitHeight = 362
     end
     object PanelSourceTitle: TPanel
       AlignWithMargins = True
@@ -369,9 +366,6 @@ object FormDelphiFormatter: TFormDelphiFormatter
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 2
-      ExplicitLeft = 80
-      ExplicitTop = 392
-      ExplicitWidth = 41
       object Label2: TLabel
         AlignWithMargins = True
         Left = 5
@@ -383,7 +377,6 @@ object FormDelphiFormatter: TFormDelphiFormatter
         Margins.Bottom = 0
         Align = alLeft
         Caption = 'Encoding:'
-        ExplicitLeft = 0
         ExplicitHeight = 15
       end
       object LabelEncoding: TLabel

@@ -48,7 +48,6 @@ function AddSpacesAroundOperatorSymbol(Input: string; Op: string): string;
 var
   RegEx: TRegEx;
   RegExpStr: string;
-  Match: TMatch;
 begin
   RegExpStr := '([^e=( ])(' + Op + ')';
   RegEx := TRegEx.Create(RegExpStr, [roMultiLine, roIgnoreCase]);
@@ -86,7 +85,7 @@ begin
 end;
 
 
-procedure SkipCommentsAndStrings(Input: string; Op: string; var PartToProcess, PartToSkip: string);
+procedure SkipComments(Input: string; Op: string; var PartToProcess, PartToSkip: string);
 var
   RegEx: TRegEx;
   RegExpStr: string;
@@ -168,10 +167,10 @@ end;
 
 function FormatDelphiCode(Input: string; CodeStrings: TList<string>; FormatterConfig: TFormatterConfig): string;
 var
-  i: Integer;
+  i, si: Integer;
   StrList: TStringList;
   PartToProcess, PartToSkit: string;
-  LastChar: Char;
+  SplittedStrings: TArray<string>;
 begin
   if (CodeStrings = nil) then
   begin
@@ -187,20 +186,25 @@ begin
   begin
     PartToProcess := CodeStrings[i];
     PartToSkit := '';
-    // Skip Comments
-    SkipCommentsAndStrings(PartToProcess, '\/\/', PartToProcess, PartToSkit);
-    SkipCommentsAndStrings(PartToProcess, '{', PartToProcess, PartToSkit);
-    // Skip Strings
-    SkipCommentsAndStrings(PartToProcess, '''', PartToProcess, PartToSkit);
 
-    PartToProcess := FormatDelphiCodeCleaned(PartToProcess, FormatterConfig);
+    SkipComments(PartToProcess, '\/\/', PartToProcess, PartToSkit);
+    SkipComments(PartToProcess, '{', PartToProcess, PartToSkit);
 
-    // Workaround to add space after = and before string
-    if (Length(PartToProcess) > 0) and (Length(PartToSkit) > 0) then
+    // Skip Strings from processing
+    SplittedStrings := SplitString(PartToProcess, '''');
+    PartToProcess := '';
+    for si := 0 to Length(SplittedStrings) - 1 do
     begin
-      LastChar := PartToProcess[Length(PartToProcess)];
-      if ((LastChar = '=') or (LastChar = '+')) and (PartToSkit[1] = '''') then
-        PartToProcess := PartToProcess + ' ';
+      if not Odd(si) then // Only even are code, odd are strings
+      begin
+        // Add back quotes
+        if si - 1 >= 0 then SplittedStrings[si] := '''' + SplittedStrings[si];
+        if si + 1 < Length(SplittedStrings) then SplittedStrings[si] := SplittedStrings[si] + '''';
+
+        SplittedStrings[si] := FormatDelphiCodeCleaned(SplittedStrings[si], FormatterConfig);
+      end;
+
+      PartToProcess := PartToProcess + SplittedStrings[si];
     end;
 
     CodeStrings[i] := PartToProcess + PartToSkit;
@@ -208,7 +212,6 @@ begin
 
   for i := 0 to CodeStrings.Count - 1 do
     Result := Result + CodeStrings[i] + sLineBreak;
-//    MemoResult.Lines.Add(CodeStrings[i])
 end;
 
 end.
