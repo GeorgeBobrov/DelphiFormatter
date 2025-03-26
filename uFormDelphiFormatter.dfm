@@ -1,7 +1,7 @@
 object FormDelphiFormatter: TFormDelphiFormatter
   Left = 0
   Top = 0
-  Caption = 'Delphi Formatter 1.6'
+  Caption = 'Delphi Formatter 1.6.1'
   ClientHeight = 582
   ClientWidth = 934
   Color = clBtnFace
@@ -199,6 +199,14 @@ object FormDelphiFormatter: TFormDelphiFormatter
           TabOrder = 1
           OnClick = ButtonSaveConfigClick
         end
+      end
+      object CheckBoxSkipComments: TCheckBox
+        Left = 9
+        Top = 150
+        Width = 97
+        Height = 17
+        Caption = 'Skip comments'
+        TabOrder = 6
       end
     end
     object PanelCommands: TPanel

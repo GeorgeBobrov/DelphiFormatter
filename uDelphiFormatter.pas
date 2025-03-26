@@ -12,6 +12,7 @@ type
     AddSpacesAroundBinOpsWord: Boolean;
     AddSpaceAfterColon: Boolean;
     AddSpaceAfterColonChars: string;
+    SkipComments: Boolean;
   end;
 
 function FormatDelphiCode(Input: string; CodeStrings: TList<string>; FormatterConfig: TFormatterConfig): string;
@@ -187,15 +188,18 @@ begin
     PartToProcess := CodeStrings[i];
     PartToSkit := '';
 
-    SkipComments(PartToProcess, '\/\/', PartToProcess, PartToSkit);
-    SkipComments(PartToProcess, '{', PartToProcess, PartToSkit);
+    if FormatterConfig.SkipComments then
+    begin
+      SkipComments(PartToProcess, '\/\/', PartToProcess, PartToSkit);
+      SkipComments(PartToProcess, '{', PartToProcess, PartToSkit);
+    end;
 
-    // Skip Strings from processing
+    // Skip 'strings' in code from processing
     SplittedStrings := SplitString(PartToProcess, '''');
     PartToProcess := '';
     for si := 0 to Length(SplittedStrings) - 1 do
     begin
-      if not Odd(si) then // Only even are code, odd are strings
+      if not Odd(si) then // Only even parts are code, odd are strings
       begin
         // Add back quotes
         if si - 1 >= 0 then SplittedStrings[si] := '''' + SplittedStrings[si];

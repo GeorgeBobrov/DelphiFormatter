@@ -50,6 +50,7 @@ type
     PanelConfigTitle: TPanel;
     Label5: TLabel;
     LabelConfigFile: TLabel;
+    CheckBoxSkipComments: TCheckBox;
     procedure ButtonProcessClick(Sender: TObject);
     procedure ButtonCopyResultToSourceClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -162,6 +163,8 @@ begin
 
   FormatterConfig.AddSpaceAfterColon := CheckBoxAddSpaceAfterColon.Checked;
   FormatterConfig.AddSpaceAfterColonChars := EditAddSpaceAfterColon.Text;
+
+  FormatterConfig.SkipComments := CheckBoxSkipComments.Checked;
 
   CodeStrings := TList<string>.Create;
   CodeStrings.AddRange(MemoSource.Lines.ToStringArray);
@@ -314,6 +317,7 @@ begin
   CheckBoxAddSpacesAroundBinOpsWord.Checked := IniFile.ReadBool('Common', 'AddSpacesAroundBinOpsWord', CheckBoxAddSpacesAroundBinOpsWord.Checked);
   CheckBoxAddSpaceAfterColon.Checked := IniFile.ReadBool('Common', 'AddSpaceAfterColon', CheckBoxAddSpaceAfterColon.Checked);
   EditAddSpaceAfterColon.Text := IniFile.ReadString('Common', 'AddSpaceAfterColonList', EditAddSpaceAfterColon.Text);
+  CheckBoxSkipComments.Checked := IniFile.ReadBool('Common', 'SkipComments', CheckBoxSkipComments.Checked);
 
   FreeAndNil(IniFile);
 
@@ -333,6 +337,7 @@ begin
   IniFile.WriteBool('Common', 'AddSpacesAroundBinOpsWord', CheckBoxAddSpacesAroundBinOpsWord.Checked);
   IniFile.WriteBool('Common', 'AddSpaceAfterColon', CheckBoxAddSpaceAfterColon.Checked);
   IniFile.WriteString('Common', 'AddSpaceAfterColonList', EditAddSpaceAfterColon.Text);
+  IniFile.WriteBool('Common', 'SkipComments', CheckBoxSkipComments.Checked);
 
   IniFile.UpdateFile;
   FreeAndNil(IniFile);
